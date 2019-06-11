@@ -43,7 +43,6 @@ exports.insertNewUser = async function (user) {
 });
 };
 
-
 /*
  * Fetch a user from the DB based on user ID.
  */
