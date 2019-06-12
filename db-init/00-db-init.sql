@@ -70,6 +70,7 @@ DROP TABLE IF EXISTS `courses`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `courses` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `description` varchar(500),
   `subject` varchar(255) NOT NULL,
   `number` mediumint(3) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -106,6 +107,22 @@ INSERT INTO `courses` VALUES
   (15,"MUS",102,"Intro MUS 2","Winter",9);
 /*!40000 ALTER TABLE `courses` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `enroll`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enroll` (
+  `course_id`  mediumint(9) NOT NULL,
+  `student_id` mediumint(9) NOT NULL,
+  PRIMARY KEY (`course_id`, `student_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_course_id` (`course_id`),
+  CONSTRAINT `enroll_ibfk_1` FOREIGN KEY (`student_is`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `enroll_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Table structure for table `assignments`
