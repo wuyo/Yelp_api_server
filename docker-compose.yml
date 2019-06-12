@@ -3,7 +3,10 @@ services:
   api:
     build: .
     image: businesses-api
-    restart: always
+    networks:
+    - mysql-net
+    depends_on:
+    - mysql
     ports:
       - 8000:8000
     environment:
@@ -12,13 +15,16 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
+    links:
+    - "mysql:api"
 
   mysql:
     image: mysql:5
-    restart: always
+    networks:
+    - mysql-net
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./db-init/:/docker-entrypoint-initdb.d
+      - bar-volume:/var/lib/mysql
+      - ./db-init:/00-db-init.sql
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -26,5 +32,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
 volumes:
-  mysql-data:
-    name: businesses-mysql-data
+    bar-volume: {}
+networks:
+    mysql-net:
+      driver: bridge
