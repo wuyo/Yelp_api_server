@@ -2,7 +2,7 @@ version: '3.7'
 services:
   api:
     build: .
-    image: businesses-api
+    image: tarpaulin-api
     restart: always
     ports:
       - 8000:8000
@@ -27,4 +27,4 @@ services:
 
 volumes:
   mysql-data:
-    name: businesses-mysql-data
+    name: tarpaulin-mysql-data

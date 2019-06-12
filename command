@@ -45,6 +45,14 @@ docker run --rm -it --network mysql-net -v ${PWD}:/home/ass2 -p 8000:8000 node /
  
  mongodb://businesses:hunter2@mongodb:27017/businesses
  
+ final:
+ 
+ docker run -d --name mysql-server --network final-net -p "3306:3306" -v ${PWD}/db-init/00-db-init.sql:/docker-entrypoint-initdb.d/00-db-init.sql -e "MYSQL_RANDOM_ROOT_PASSWORD=yes" -e "MYSQL_DATABASE=tarpaulin" -e "MYSQL_USER=nexus" -e "MYSQL_PASSWORD=hunter2" mysql:5
+ 
+ docker run --rm -it --network final-net mysql:5 mysql -h mysql-server -u nexus -p
+ 
+ docker run --rm -it --network final-net -v ${PWD}:/home/final -p 8000:8000 node:11 /bin/bash
+ 
  export MONGO_HOST=mongodb
  export MONGO_DB_NAME=businesses
  export MONGO_USER=businesses

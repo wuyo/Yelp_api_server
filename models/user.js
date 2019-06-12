@@ -6,7 +6,6 @@ const { ObjectId } = require('mysql');
 const bcrypt = require('bcryptjs');
 
 const { extractValidFields } = require('../lib/validation');
-const { getDBReference } = require('../lib/mysqlPool');
 const mysqlPool = require('../lib/mysqlPool');
 
 /*
@@ -44,14 +43,22 @@ exports.insertNewUser = async function (user) {
 };
 
 /*
- * Fetch a user from the DB based on user ID.
+ * Fetch a user from the DB based on nothing.
  */
-async function getUserByEmail(userEmail, includePassword){
+
+function escape(type, value){
+  let construct = `SET @sql = CONCAT('SELECT ', (SELECT REPLACE(GROUP_CONCAT(COLUMN_NAME), 'password,', '')`
+              +  `FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users' AND TABLE_SCHEMA = 'tarpaulin'),`
+              +  `' FROM users', ' WHERE ` + type + ` = ` + `"` + value + `"` + ` ');PREPARE stmt1 FROM @sql;EXECUTE stmt1`;
+  return construct;
+}
+
+async function getUser(type, includePassword){
   return new Promise((resolve, reject) => {
     if(includePassword){
       mysqlPool.query(
       'SELECT * FROM users WHERE email = ?',
-      [ userEmail ],
+      [ type ],
       function (err,results) {
         if (err) {
           reject(err);
@@ -60,33 +67,35 @@ async function getUserByEmail(userEmail, includePassword){
         }
       });
     }
-  });
-};
-
-exports.getUserByEmail = getUserByEmail;
-
-let queryData = `SET @sql = CONCAT('SELECT ', (SELECT REPLACE(GROUP_CONCAT(COLUMN_NAME), 'password,', '')`
-              +  `FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users' AND TABLE_SCHEMA = 'tarpaulin'),`
-              +  `' FROM users', ' WHERE id = ? ');PREPARE stmt1 FROM @sql;EXECUTE stmt1`;
-
-async function getUserById(id){
-  return new Promise((resolve, reject) => {
-    mysqlPool.query(
-    queryData, [ id ],
-    function (err,results) {
-      if (err) {
-        reject(err);
+    else {
+      var queryData;
+      if(isNaN(type)){
+        queryData = escape('email',type);
       } else {
-        resolve(results[2]);
+        queryData = escape('id',type);
       }
-    });
+      mysqlPool.query( queryData,
+      function (err,results) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results[2]);
+        }
+      });
+    }
   });
-};
+}
 
-exports.getUserById = getUserById;
+exports.getUser = getUser;
 
-exports.validateUser = async function (email, password) {
-  const user = await getUserByEmail(email, true);
+exports.validateUser = async function (email, password, includePassword) {
+  var user;
+  if(includePassword){
+    user = await getUser(email,true);
+  }
+  else{
+    user = await getUser(email,null);
+  }
   const authenticated = user && await bcrypt.compare(password, user.password);
   return authenticated;
 };

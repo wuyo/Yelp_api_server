@@ -1,10 +1,7 @@
 const router = require('express').Router();
 
-const { getBusinessesByOwnerId } = require('../models/business');
-const { getReviewsByUserId } = require('../models/review');
-const { getPhotosByUserId } = require('../models/photo');
 const { validateAgainstSchema } = require('../lib/validation');
-const { UserSchema, insertNewUser, getUserById, validateUser } = require('../models/user');
+const { UserSchema, insertNewUser, getUser, validateUser } = require('../models/user');
 const { generateAuthToken, requireAuthentication } = require('../lib/auth');
 
 router.post('/', requireAuthentication, async (req, res) => {
@@ -36,9 +33,9 @@ router.post('/', requireAuthentication, async (req, res) => {
 router.post('/login', async (req, res) => {
   if (req.body && req.body.email && req.body.password) {
     try {
-      const authenticated = await validateUser(req.body.email, req.body.password);
+      const authenticated = await validateUser(req.body.email, req.body.password, true);
       if (authenticated) {
-        const token = generateAuthToken(req.body.id);
+        const token = generateAuthToken(req.body.email);
         res.status(200).send({
           token: token
         });
@@ -63,7 +60,8 @@ router.post('/login', async (req, res) => {
 router.get('/:id', requireAuthentication, async (req, res, next) => {
   if (req.params.id == req.user || req.admin) {
     try {
-      const user = await getUserById(parseInt(req.body.id));
+      // const user = await getUserByEmail(parseInt(req.params.id));
+      const user = await getUser(parseInt(req.params.id),null);
       if (user) {
         res.status(200).send(user);
       } else {
@@ -81,3 +79,5 @@ router.get('/:id', requireAuthentication, async (req, res, next) => {
     });
   }
 });
+
+module.exports = router;

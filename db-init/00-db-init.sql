@@ -27,7 +27,7 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` char(10), NOT NULL,
+  `role` char(10) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
@@ -40,23 +40,23 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-  (0,'Admin','admin@courses.com','$2a$08$Y00/JO/uN9n0dHKuudRX2eKksWMIHXDLzHWKuz/K67alAYsZRRike',1),
-  (1,'Nick Arzner','nick@block15.com','$2a$08$Y2IHnr/PU9tzG5HKrHGJH.zH3HAvlR5i5puD5GZ1sHA/mVrHKci72',0),
-  (2,'Tori Lockwood','lori@robnetts.com','$2a$08$bAKRXPs6fUPhqjZy55TIeO1e.aXud4LD81awrYncaCKJoMsg/s0c.',0),
-  (3,'Joel Rea','joel@lickspigot.com','$2a$08$WvRkJm.bz3zoRnmA.aQZBewLopoe00nA4qbzbnLyS4eRbm2MFNkMO',0),
-  (4,'The Owners','owners@firstalt.coop','$2a$08$FBStm3plzBCnh/MPIUsJ0.f7kJkp6aH47haXHb3HY.Gfygan7e8He',0),
-  (5,'Kim Marchesi','kim@localboyzhawaiiancafe.com','$2a$08$q8njvTTel9JDR.BQbb1cD.XL73CR.QCOXLnofdpd9orbv0dzWGir.',0),
-  (6,'William McCanless','william@interzoneorganic1','$2a$08$U7IXbbolDIk0SRlmH/dnT.FBCvf.EMvorShGlM65XeQFr./P0rhqe',0),
-  (7,'Paul Turner','paul@darksidecinema.com','$2a$08$Kb1f8JbT/9kl.wRuRsRoYO19ddMcc79zXvfUcwchJJ1qHxVMDJN1K',0),
-  (8,'Allan Stuart','allan@allanscoffee.com','$2a$08$ALw6f6NIpdptAUhhezTjhezjjnMLcbBP/uRnqVCwYNSWBdno6y2I6',0),
-  (9,'Winco Employees','employees@wincofoods.com','$2a$08$64je8REF7I4j4bQuJKIdXO09VkCXJqoaF18znHs/a3zuKi/olDR/S',0),
-  (10,'Philip Wilson','philib@bookbin.com','$2a$08$Ev.K7sU3yWrCUECK2O2a5.eA8mbvVEImv/EyYka1yhRxQFKIbxrfS',0),
-  (11,'Fred Meyer','fred@fredmeyer.com','$2a$08$ljdJ4mrSIEXsaiEMu29xUuEFAOj43gL5rcR7wCq8Rl2z/bqzf.xuC',0),
-  (12,'Mike Easter','mike@cyclotopia.com','$2a$08$Apk5L0bDogb4G6ZtoKluPeZXCxye0qdNZCah9TJX9QvdRqZ5hwWAy',0),
-  (13,'Casey Collett','casey@oregoncoffeeandtea.com','$2a$08$5SL3bkbe5S1WnE6rWciiX.9HAfXG/UGbZAQU7K0S4XTNGIHapPBy2',0),
-  (14,'John Semadeni','john@corvalliscycleryinc.com','$2a$08$xIku71t6OFFN9Ztil1Kh2eQWk/0lC8C.UThx3PwAwYCSMxdzpPhTO',0),
-  (15,'Alex Spaeth','alex@spaethlumber.com','$2a$08$H9dDFONytVUgh2ZcCQlHL.8uP6RricbtoCk2vsr/roTBtGkYLUivS',0),
-  (16,'Tristan James','tristan@newmorningbakery.com','$2a$08$pJFEMJNiTa7azhokPUnXZusS6NMqT3eBJE45sX6Kli380PZoM2nje',0)
+  (0,"Admin","admin@courses.com","$2a$08$Y00/JO/uN9n0dHKuudRX2eKksWMIHXDLzHWKuz/K67alAYsZRRike","admin"),
+  (1,"Nick Arzner","nick@block15.com","$2a$08$Y2IHnr/PU9tzG5HKrHGJH.zH3HAvlR5i5puD5GZ1sHA/mVrHKci72","instructor"),
+  (2,"Tori Lockwood","lori@robnetts.com","$2a$08$bAKRXPs6fUPhqjZy55TIeO1e.aXud4LD81awrYncaCKJoMsg/s0c.","instructor"),
+  (3,"Joel Rea","joel@lickspigot.com","$2a$08$WvRkJm.bz3zoRnmA.aQZBewLopoe00nA4qbzbnLyS4eRbm2MFNkMO","instructor"),
+  (4,"The Owners","owners@firstalt.coop","$2a$08$FBStm3plzBCnh/MPIUsJ0.f7kJkp6aH47haXHb3HY.Gfygan7e8He","student"),
+  (5,"Kim Marchesi","kim@localboyzhawaiiancafe.com","$2a$08$q8njvTTel9JDR.BQbb1cD.XL73CR.QCOXLnofdpd9orbv0dzWGir.","instructor"),
+  (6,"William McCanless","william@interzoneorganic1","$2a$08$U7IXbbolDIk0SRlmH/dnT.FBCvf.EMvorShGlM65XeQFr./P0rhqe","instructor"),
+  (7,"Paul Turner","paul@darksidecinema.com","$2a$08$Kb1f8JbT/9kl.wRuRsRoYO19ddMcc79zXvfUcwchJJ1qHxVMDJN1K","instructor"),
+  (8,"Allan Stuart","allan@allanscoffee.com","$2a$08$ALw6f6NIpdptAUhhezTjhezjjnMLcbBP/uRnqVCwYNSWBdno6y2I6","student"),
+  (9,"Winco Employees","employees@wincofoods.com","$2a$08$64je8REF7I4j4bQuJKIdXO09VkCXJqoaF18znHs/a3zuKi/olDR/S","instructor"),
+  (10,"Philip Wilson","philib@bookbin.com","$2a$08$Ev.K7sU3yWrCUECK2O2a5.eA8mbvVEImv/EyYka1yhRxQFKIbxrfS","instructor"),
+  (11,"Fred Meyer","fred@fredmeyer.com","$2a$08$ljdJ4mrSIEXsaiEMu29xUuEFAOj43gL5rcR7wCq8Rl2z/bqzf.xuC","student"),
+  (12,"Mike Easter","mike@cyclotopia.com","$2a$08$Apk5L0bDogb4G6ZtoKluPeZXCxye0qdNZCah9TJX9QvdRqZ5hwWAy","student"),
+  (13,"Casey Collett","casey@oregoncoffeeandtea.com","$2a$08$5SL3bkbe5S1WnE6rWciiX.9HAfXG/UGbZAQU7K0S4XTNGIHapPBy2","student"),
+  (14,"John Semadeni","john@corvalliscycleryinc.com","$2a$08$xIku71t6OFFN9Ztil1Kh2eQWk/0lC8C.UThx3PwAwYCSMxdzpPhTO","student"),
+  (15,"Alex Spaeth","alex@spaethlumber.com","$2a$08$H9dDFONytVUgh2ZcCQlHL.8uP6RricbtoCk2vsr/roTBtGkYLUivS","student"),
+  (16,"Tristan James","tristan@newmorningbakery.com","$2a$08$pJFEMJNiTa7azhokPUnXZusS6NMqT3eBJE45sX6Kli380PZoM2nje","student");
   ;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -73,8 +73,8 @@ CREATE TABLE `courses` (
   `subject` varchar(255) NOT NULL,
   `number` mediumint(3) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `term`: char(5) NOT NULL,
-  `instructorId`: mediumint(9) NOT NULL,
+  `term` char(5) NOT NULL,
+  `instructorId` mediumint(9) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_instructorId` (`instructorId`),
   CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`instructorId`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -88,25 +88,22 @@ CREATE TABLE `courses` (
 LOCK TABLES `courses` WRITE;
 /*!40000 ALTER TABLE `courses` DISABLE KEYS */;
 INSERT INTO `courses` VALUES
-  (1,'Block 15','300 SW Jefferson Ave.','Corvallis','OR','97333','541-758-2077','Restaurant','Brewpub','http://block15.com',NULL,1),
-  (2,'Robnett\'s Hardware','400 SW 2nd St.','Corvallis','OR','97333','541-753-5531','Shopping','Hardware',NULL,NULL,2),
-  (3,'Corvallis Brewing Supply','119 SW 4th St.','Corvallis','OR','97333','541-758-1674','Shopping','Brewing Supply','http://www.lickspigot.com',NULL,3),
-  (4,'First Alternative Co-op North Store','2855 NW Grant Ave.','Corvallis','OR','97330','541-452-3115','Shopping','Groceries',NULL,NULL,4),
-  (5,'Local Boyz','1425 NW Monroe Ave.','Corvallis','OR','97330','541-754-5338','Restaurant','Hawaiian',NULL,NULL,5),
-  (6,'Interzone','1563 NW Monroe Ave.','Corvallis','OR','97330','541-754-5965','Restaurant','Coffee Shop',NULL,NULL,6),
-  (7,'Darkside Cinema','215 SW 4th St.','Corvallis','OR','97333','541-752-4161','Entertainment','Movie Theater','http://darksidecinema.com',NULL,7),
-  (8,'The Beanery Downtown','500 SW 2nd St.','Corvallis','OR','97333','541-753-7442','Restaurant','Coffee Shop',NULL,NULL,8),
-  (9,'WinCo Foods','2335 NW Kings Blvd.','Corvallis','OR','97330','541-753-7002','Shopping','Groceries',NULL,NULL,9),
-  (10,'The Book Bin','215 SW 4th St.','Corvallis','OR','97333','541-752-0040','Shopping','Book Store',NULL,NULL,10),
-  (11,'Fred Meyer','777 NW Kings Blvd.','Corvallis','OR','97330','541-753-9116','Shopping','Groceries',NULL,NULL,11),
-  (12,'Cyclotopia','435 SW 2nd St.','Corvallis','OR','97333','541-757-9694','Shopping','Bicycle Shop',NULL,NULL,12),
-  (13,'Oregon Coffee & Tea','215 NW Monroe Ave.','Corvallis','OR','97333','541-752-2421','Shopping','Tea House','http://www.oregoncoffeeandtea.com',NULL,13),
-  (14,'Corvallis Cyclery','344 SW 2nd St.','Corvallis','OR','97333','541-752-5952','Shopping','Bicycle Shop',NULL,NULL,14),
-  (15,'Spaeth Lumber','1585 NW 9th St.','Corvallis','OR','97330','541-752-1930','Shopping','Hardware',NULL,NULL,15),
-  (16,'New Morning Bakery','219 SW 2nd St.','Corvallis','OR','97333','541-754-0181','Restaurant','Bakery',NULL,NULL,16),
-  (17,'First Alternative Co-op South Store','1007 SE 3rd St.','Corvallis','OR','97333','541-753-3115','Shopping','Groceries',NULL,NULL,4),
-  (18,'Block 15 Brewery & Tap Room','3415 SW Deschutes St.','Corvallis','OR','97333','541-752-2337','Restaurant','Brewpub','http://block15.com',NULL,1),
-  (19,'The Beanery Monroe','2541 NW Monroe Ave.','Corvallis','OR','97330','541-757-0828','Restaurant','Coffee Shop',NULL,NULL,8);
+  (0,"CS",100,"Intro CS","Fall",1),
+  (1,"CS",101,"Intro CS","Fall",1),
+  (2,"CS",102,"Intro CS2","Fall",2),
+  (3,"CS",201,"Intro CS3","Winter",1),
+  (4,"CS",201,"Intro C++","Fall",3),
+  (5,"PAC",101,"BALLET","Fall",4),
+  (6,"PAC",102,"BALLET 2","Winter",4),
+  (7,"PAC",201,"Yoga","Spring",5),
+  (8,"BA",101,"Intro BA","Fall",6),
+  (9,"BA",102,"Intro BA 2","Winter",6),
+  (10,"SUS",101,"Intr SUS","Spring",7),
+  (11,"SUS",102,"Intro SUS 2","Summer",7),
+  (12,"GEOG",101,"Intro GEOG","Fall",8),
+  (13,"GEOG",102,"Intro GEOG 2","Spring",8),
+  (14,"MUS",101,"Intro MUS","Fall",9),
+  (15,"MUS",102,"Intro MUS 2","Winter",9);
 /*!40000 ALTER TABLE `courses` ENABLE KEYS */;
 UNLOCK TABLES;
 

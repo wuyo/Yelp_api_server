@@ -8,9 +8,8 @@ export MONGO_USER="nexus"
 export MONGO_PASSWORD="hunter2"
 export MONGO_PORT="27017"
 export RABBITMQ_HOST="rabbitmq-server"
-
-
 export MYSQL_HOST="mysql-server"
+export MYSQL_PORT="3306"
 export MYSQL_DATABASE="tarpaulin"
 export MYSQL_USER="nexus"
 export MYSQL_PASSWORD="hunter2"
