@@ -21,21 +21,29 @@ exports.AssignmentSchema = AssignmentSchema;
  * Executes a MySQL query to insert a new assignemnt into the database.  Returns
  * a Promise that resolves to the ID of the newly-created assignemnt entry.
  */
-function insertNewAssignment(assignemnt) {
-  return new Promise((resolve, reject) => {
+async function insertNewAssignment(assignemnt) {
+  // return new Promise((resolve, reject) => {
     assignemnt = extractValidFields(assignemnt, AssignmentSchema);
-    mysqlPool.query(
-      'INSERT INTO assignemnts SET ?',
-      assignemnt,
-      (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.insertId);
-        }
-      }
-    );
-  });
+    var date = new Date(assignemnt.due);
+    assignemnt.due = date;
+    const db = getDBReference();
+    const collection = db.collection('assignemnts');
+    const result = await collection.insertOne(assignemnt);
+    return result.insertedId;
+  //   assignemnt.due.toISOString();
+  //   assignemnt = extractValidFields(assignemnt, AssignmentSchema);
+  //   mysqlPool.query(
+  //     'INSERT INTO assignemnts SET ?',
+  //     assignemnt,
+  //     (err, result) => {
+  //       if (err) {
+  //         reject(err);
+  //       } else {
+  //         resolve(result.insertId);
+  //       }
+  //     }
+  //   );
+  // });
 }
 exports.insertNewAssignment = insertNewAssignment;
 

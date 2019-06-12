@@ -45,6 +45,9 @@ docker run --rm -it --network mysql-net -v ${PWD}:/home/ass2 -p 8000:8000 node /
  
  mongodb://businesses:hunter2@mongodb:27017/businesses
  
+ 
+ 
+ 
  final:
  
  docker run -d --name mysql-server --network final-net -p "3306:3306" -v ${PWD}/db-init/00-db-init.sql:/docker-entrypoint-initdb.d/00-db-init.sql -e "MYSQL_RANDOM_ROOT_PASSWORD=yes" -e "MYSQL_DATABASE=tarpaulin" -e "MYSQL_USER=nexus" -e "MYSQL_PASSWORD=hunter2" mysql:5
@@ -52,6 +55,18 @@ docker run --rm -it --network mysql-net -v ${PWD}:/home/ass2 -p 8000:8000 node /
  docker run --rm -it --network final-net mysql:5 mysql -h mysql-server -u nexus -p
  
  docker run --rm -it --network final-net -v ${PWD}:/home/final -p 8000:8000 node:11 /bin/bash
+ 
+ * docker run -d --name mongodb --network final-net -p "27017:27017" -v `pwd`/db-init/:/docker-entrypoint-initdb.d -v `pwd`/mongodb:/home/mongodb -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=tarpaulin" mongo:latest
+ 
+ docker run -d --name mongodb --network final-net -p "27017:27017" -v ${PWD}/db-init/01-db-init.js:/docker-entrypoint-initdb.d/01-db-init.js -v ${PWD}/mongodb:/home/mongodb -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=tarpaulin" mongo:latest
+ 
+ docker run --rm -it --network final-net -p 28000:27017 --name mongoClient mongo:latest mongo --host mongodb --username root --password hunter2
+ 
+ db.createUser({
+			user: "nexus",
+			pwd: "hunter2",
+			roles: [ { role: "readWrite", db: "tarpaulin" } ]
+		})
  
  export MONGO_HOST=mongodb
  export MONGO_DB_NAME=businesses

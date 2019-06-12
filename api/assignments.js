@@ -19,18 +19,12 @@ const {
  * Route to create a new assignemnt.
  */
 router.post('/', requireAuthentication, async (req, res) => {
-  const user = getUserById(req.user);
-
-  if (user.role === 'instructor' || req.admin) {
+  if ((req.role === 'instructor' && req.user == req.body.insertId) || req.admin) {
     if (validateAgainstSchema(req.body, AssignemntSchema)) {
       try {
-        const id = await insertNewAssignemnt(req.body);
+        const id = insertNewAssignemnt(req.body);
         res.status(201).send({
           id: id,
-          links: {
-            assignemnt: `/assignemnts/${id}`,
-            business: `/courses/${req.body.courseId}`
-          }
         });
       } catch (err) {
         console.error(err);
