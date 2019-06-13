@@ -153,3 +153,24 @@ function getAssignmentsByUserId(id) {
   });
 }
 exports.getAssignmentsByUserId = getAssignmentsByUserId;
+
+async function getAssignmentsCourseId(id) {
+  const db = getDBReference();
+  const collection = db.collection("assignments");
+  const results = await collection.find({ courseId: id }).project({ _id: 1 }).toArray();
+  // console.log(results);
+  return results;
+}
+exports.getAssignmentsCourseId = getAssignmentsCourseId;
+
+async function deleteAssignmentById(id) {
+  const db = getDBReference();
+  const collection = db.collection("assignments");
+  const results = await collection.deleteMany({ courseId: id },function(err, obj) {
+  if (err) throw err;
+  console.log(obj.result.n + " document(s) deleted");
+  });
+  // console.log(results);
+  return results;
+}
+exports.deleteAssignmentById = deleteAssignmentById;

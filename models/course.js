@@ -9,13 +9,22 @@ const CourseSchema = {
   title: { required: true },
   term: { required: true },
   instructorId: { required: true },
-
 };
 exports.CourseSchema = CourseSchema;
 
+const CoursePatchSchema = {
+  description: { required: false },
+  subject: { required: false },
+  number: { required: false },
+  title: { required: false },
+  term: { required: false },
+  instructorId: { required: false },
+};
+exports.CoursePatchSchema = CoursePatchSchema;
+
 const EnrollSchema = {
+  course: { require: true },
   student: { required: true },
-  type: {required: true},
 };
 exports.EnrollSchema = EnrollSchema;
 
@@ -34,7 +43,7 @@ async function getCourseCount() {
   });
 }
 
-exports.getcoursePage = async function (page) {
+exports.getcoursePage = async function (page, subject, term, number) {
   return new Promise(async (resolve, reject) => {
     try{
         const count = await getCourseCount();
@@ -44,9 +53,12 @@ exports.getcoursePage = async function (page) {
         page = page > lastPage ? lastPage : page;
         const offset = (page - 1) * pageSize;
 
+        let queryData = 'SELECT * FROM courses ORDER BY id LIMIT ?,?'
         mysqlPool.query(
-          'SELECT * FROM courses ORDER BY id LIMIT ?,?',
-          [ offset, pageSize ],
+          queryData,
+          // 'SELECT * FROM courses ORDER BY id WHERE subject = ? AND number = ? AND term = ? LIMIT ?,?',
+          // [ subject, number, term, offset, pageSize ],
+          [offset, pageSize ],
           (err, results) => {
             if (err) {
               reject(err);
@@ -74,7 +86,7 @@ exports.insertCoursePage = async function (course) {
       id: null,
       description: course.description,
       subject: course.subject,
-      cnumber: course.number,
+      number: course.number,
       title: course.title,
       term: course.term,
       instructorId: course.instructorId
@@ -108,15 +120,30 @@ exports.getCoursePageById = async function (courseId){
   });
 };
 
+exports.getInstructorById = async function (courseId){
+    return new Promise(async (resolve, reject) => {
+            mysqlPool.query(
+                'SELECT instructorId FROM courses WHERE id = ?',
+                [ courseId ],
+                function (err, results) {
+                    if (err) {
+                      reject(err);
+                    } else {
+                      resolve(results[0]);
+                    }
+                  }
+            );
+    });
+};
+
 exports.updateCoursePageById = async function (courseId, course) {
   return new Promise(async (resolve, reject) => {
     const value = {
       description: course.description,
       subject: course.subject,
-      cnumber: course.number,
+      number: course.number,
       title: course.title,
-      term: course.term,
-      instructorId: course.instructorId
+      term: course.term
     };
     mysqlPool.query('UPDATE courses SET ? WHERE id = ?',
         [value, courseId],
@@ -182,26 +209,6 @@ exports.insertEnrollPage = async function (courseId, studentId) {
   });
 };
 
-exports.updateEnrollById = async function (enrollId, enroll) {
-  return new Promise(async (resolve, reject) => {
-    const value = {
-      course: enrollId,
-      student: enroll.student,
-      type: enroll.type
-    };
-    mysqlPool.query('UPDATE enroll SET ? WHERE course = ?',
-      [value, enrollId],
-      (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results.affectedRows > 0);
-        }
-      }
-    );
-  });
-};
-
 exports.removeEnroll = async function (courseId, studentId) {
   return new Promise(async (resolve, reject) => {
     mysqlPool.query('DELETE FROM enroll WHERE course = ? AND student = ?',
@@ -235,12 +242,17 @@ function getCoursePosterById(courseId){
 }
 exports.getCoursePosterById = getCoursePosterById;
 
-exports.getDownloadStreamById = function (id) {
-  const db = getDBReference();
-  const bucket = new GridFSBucket(db, { bucketName: 'photos' });
-  if (!ObjectId.isValid(id)) {
-    return null;
-  } else {
-    return bucket.openDownloadStream(new ObjectId(id));
-  }
+exports.deleteEnrollById = async function (enrollId) {
+  return new Promise(async (resolve, reject) => {
+    mysqlPool.query('DELETE FROM enroll WHERE course = ?',
+        [enrollId],
+        (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results.affectedRows > 0);
+          }
+        }
+    );
+  });
 };

@@ -3,7 +3,7 @@ db.assignments.insertMany([
     "title":"Assignment 1",
     "due":"2019-06-14",
     "points":"100",
-    "courseId":"1"
+    "courseId":"0"
   },
   {
     "title":"Assignment 2",

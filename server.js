@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const api = require('./api');
 
 const { connectToDB } = require('./lib/mongo');
-const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
+// const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
 
 
 const app = express();

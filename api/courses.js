@@ -6,20 +6,24 @@ const router = require('express').Router();
 
 const { validateAgainstSchema } = require('../lib/validation');
 const { getUser } = require ('../models/user');
-//const { requireAuthentication } = require('../lib/auth');
+const { requireAuthentication } = require('../lib/auth');
+const { getAssignmentsCourseId, deleteAssignmentById } = require('../models/assignment');
 const {
   CourseSchema,
+  CoursePatchSchema,
   EnrollSchema,
   getcoursePage,
   insertCoursePage,
   getCoursePageById,
   updateCoursePageById,
   deleteCoursePageById,
+  deleteEnrollById,
   getEnrollById,
   insertEnrollPage,
   updateEnrollById,
   removeEnroll,
-  getCoursePosterById
+  getCoursePosterById,
+  getInstructorById
 } = require('../models/course');
 
 /*
@@ -67,8 +71,8 @@ router.get('/', async (req, res) => {
  */
 //router.post('/', requireAuthentication, async (req, res) => {
   //if (req.body.instructorId == req.user || req.admin) {
-router.post('/', async (req, res) => {
-  if(true){
+router.post('/', requireAuthentication, async (req, res) => {
+  if(req.admin){
     if (validateAgainstSchema(req.body, CourseSchema)) {
       try {
         const id = await insertCoursePage(req.body);
@@ -120,9 +124,19 @@ router.get('/:id', async (req, res, next) => {
  */
 // router.put('/:id', requireAuthentication, async (req, res, next) => {
 //   if (req.body.userid == req.user || req.admin) {
-router.patch('/:id', async (req, res, next) => {
-  if (true) {
-    if (validateAgainstSchema(req.body, CourseSchema)) {
+router.patch('/:id', requireAuthentication, async (req, res, next) => {
+  var insId;
+  try{
+     insId = await getInstructorById(req.params.id);
+  }catch (err) {
+    console.error(err);
+    res.status(500).send({
+      error: "Unable to fetch course.  Please try again later."
+    });
+  }
+  if(insId == req.user || req.admin){
+  // if (true) {
+    if (validateAgainstSchema(req.body, CoursePatchSchema)) {
       try {
         const id = parseInt(req.params.id)
         const updateSuccessful = await updateCoursePageById(id, req.body);
@@ -158,12 +172,24 @@ router.patch('/:id', async (req, res, next) => {
  */
 // router.delete('/:id', requireAuthentication, async (req, res, next) => {
 //   if (req.body.userid == req.user || req.admin) {
- router.delete('/:id', async (req, res, next) => {
-   if (true) {
+ router.delete('/:id', requireAuthentication, async (req, res, next) => {
+   var insId;
+   try{
+      insId = await getInstructorById(req.params.id);
+   }catch (err) {
+     console.error(err);
+     res.status(500).send({
+       error: "Unable to fetch course.  Please try again later."
+     });
+   }
+   if(insId == req.user || req.admin){
+
     try {
       const deleteSuccessful = await deleteCoursePageById(parseInt(req.params.id));
+      const de = await deleteEnrollById(parseInt(req.params.id));
+      const da = await deleteAssignmentById(parseInt(req.params.id));
       if (deleteSuccessful) {
-        res.status(204).end();
+        res.status(204).send({status: "success"});
       } else {
         next();
       }
@@ -180,32 +206,60 @@ router.patch('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/:id/students', async(req, res, next) =>{
-  if (true) {
-    // if (validateAgainstSchema(req.body, EnrollSchema)) {
-    if (req.body) {
-      try {
-        req.body.add.forEach(async function (student) {
-          const result = await insertEnrollPage(parseInt(req.params.id),student);
-        });
+router.post('/:id/students', requireAuthentication, async(req, res, next) =>{
+  var insId;
+  try{
+     insId = await getInstructorById(req.params.id);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      error: "Unable to fetch course.  Please try again later."
+    });
+  }
+  if(insId == req.user || req.admin){
+    if (true) {
+      if (req.body) {
+        try {
+          req.body.add.forEach(async function (student) {
+            const result = await insertEnrollPage(parseInt(req.params.id),student);
+          });
 
-        req.body.remove.forEach(async function (student) {
-          const result = await removeEnroll(parseInt(req.params.id),student);
-        });
-        res.status(201).send({
-          status: "success"
-        });
-      } catch (err) {
-        console.error(err);
-        res.status(500).send({
-          error: "Error inserting enroll into DB.  Please try again later."
-        });
+          req.body.remove.forEach(async function (student) {
+            const result = await removeEnroll(parseInt(req.params.id),student);
+          });
+          res.status(201).send({
+            status: "success"
+          });
+        } catch (err) {
+          console.error(err);
+          res.status(500).send({
+            error: "Error inserting enroll into DB.  Please try again later."
+          });
+        }
       }
+    } else {
+      res.status(400).send({
+        error: "Request body is not a valid course object."
+      });
     }
+  } else {
+    res.status(403).send({
+      error: "Unauthorized to access the specified resource"
+    });
   }
 });
 
-router.get('/:id/students', async (req, res, next) => {
+router.get('/:id/students', requireAuthentication, async (req, res, next) => {
+  var insId;
+  try{
+     insId = await getInstructorById(req.params.id);
+  }catch (err) {
+    console.error(err);
+    res.status(500).send({
+      error: "Unable to fetch course.  Please try again later."
+    });
+  }
+  if(insId == req.user || req.admin){
   try {
     /*
      * Fetch page info, generate HATEOAS links for surrounding pages and then
@@ -228,12 +282,17 @@ router.get('/:id/students', async (req, res, next) => {
     res.status(500).send({
       error: "Error fetching enroll list.  Please try again later."
     });
+      }
+  } else {
+    res.status(403).send({
+      error: "Unauthorized to access the specified resource"
+    });
   }
 });
 
 router.get('/:id/assignments', async (req, res, next) => {
   try {
-    const course = await getAssignmentsCourseId(parseInt(req.params.id));
+    const course = await getAssignmentsCourseId(req.params.id);
     if (course) {
       res.status(200).send(course);
     } else {
@@ -248,4 +307,3 @@ router.get('/:id/assignments', async (req, res, next) => {
 });
 
 module.exports = router;
-// exports.router = router;
