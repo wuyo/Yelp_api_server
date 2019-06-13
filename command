@@ -18,73 +18,75 @@ docker run --rm -it --network mysql-net -v ${PWD}:/home/ass2 -p 8000:8000 node /
 
 
  docker run --rm -it --network mysql-net mysql:5 mysqldump --databases yelp -u yelp --password="yelp123" -h mysql-server > dump2.sql
- 
+
  docker exec mysql-server /usr/bin/mysqldump -u yelp --password=yelp123 yelp > backup.sql
- 
- 
+
+
  ass4
- 
+
  //docker run -it -p 28000:27017 --name mongoClient mongo:latest mongo
- 
+
  docker run -d --name rabbitmq-server --network ass4-net -p "5672:5672" -p "15672:15672" rabbitmq:3-management
- 
+
  docker run --name rabbitmq-server --network ass4-net -p "5672:5672" -p "15672:15672" rabbitmq:3-management
- 
+
  docker run --rm -it --network ass4-net -v ${PWD}:/home/offline-work -p 8000:8000 node:11 /bin/bash
- 
+
  docker run --rm -it --network ass4-net -v `pwd`:/home/offline-work -p 8000:8000 node:11 /bin/bash
- 
+
  docker run -d --name mongodb --network ass4-net -p "27017:27017" -v ${PWD}/db-init/:/docker-entrypoint-initdb.d -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=businesses" mongo:latest
 
- 
+
 * docker run -d --name mongodb --network ass4-net -p "27017:27017" -v `pwd`/db-init/:/docker-entrypoint-initdb.d -v `pwd`/mongodb:/home/mongodb -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=businesses" mongo:latest
- 
+
  docker run -d --name mongodb --network ass4-net -p "27017:27017" -v ${PWD}/db-init/:/docker-entrypoint-initdb.d -v ${PWD}/mongodb:/home/mongodb mongo:latest
- 
+
  docker run --name mongodb --network ass4-net -p "27017:27017" -v ${PWD}/db-init/:/docker-entrypoint-initdb.d -v ${PWD}/mongodb:/home/mongodb mongo:latest
- 
+
  mongodb://businesses:hunter2@mongodb:27017/businesses
- 
- 
- 
- 
+
+
+
+
  final:
- 
+
  docker run -d --name mysql-server --network final-net -p "3306:3306" -v ${PWD}/db-init/00-db-init.sql:/docker-entrypoint-initdb.d/00-db-init.sql -e "MYSQL_RANDOM_ROOT_PASSWORD=yes" -e "MYSQL_DATABASE=tarpaulin" -e "MYSQL_USER=nexus" -e "MYSQL_PASSWORD=hunter2" mysql:5
- 
+
  docker run --rm -it --network final-net mysql:5 mysql -h mysql-server -u nexus -p
- 
+
  docker run --rm -it --network final-net -v ${PWD}:/home/final -p 8000:8000 node:11 /bin/bash
- 
+
  * docker run -d --name mongodb --network final-net -p "27017:27017" -v `pwd`/db-init/:/docker-entrypoint-initdb.d -v `pwd`/mongodb:/home/mongodb -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=tarpaulin" mongo:latest
- 
+
  docker run -d --name mongodb --network final-net -p "27017:27017" -v ${PWD}/db-init/01-db-init.js:/docker-entrypoint-initdb.d/01-db-init.js -v ${PWD}/mongodb:/home/mongodb -e "MONGO_INITDB_ROOT_USERNAME=root" -e "MONGO_INITDB_ROOT_PASSWORD=hunter2" -e "MONGO_INITDB_DATABASE=tarpaulin" mongo:latest
- 
+
  docker run --rm -it --network final-net -p 28000:27017 --name mongoClient mongo:latest mongo --host mongodb --username root --password hunter2
- 
+
+ docker run -d --name rabbitmq-server --network final-net -p "5672:5672" -p "15672:15672" rabbitmq:3-management
+
  db.createUser({
 			user: "nexus",
 			pwd: "hunter2",
 			roles: [ { role: "readWrite", db: "tarpaulin" } ]
 		})
- 
+
  export MONGO_HOST=mongodb
  export MONGO_DB_NAME=businesses
  export MONGO_USER=businesses
  export MYSQL_PASSWORD=hunter2
  export MONGO_PORT=27017
  export RABBITMQ_HOST=rabbitmq-server
- 
+
  SET MONGO_PORT=27017
  SET MONGO_HOST=localhost
  SET MONGO_DB_NAME=businesses
  SET MONGO_USER=businesses
  SET MYSQL_PASSWORD=hunter2
- 
- 
+
+
  docker run -d --name rabbitmq-server -p "5672:5672" -p "15672:15672" rabbitmq:3-management
 
- 
+
 
 
 CREATE TABLE business (
@@ -106,7 +108,7 @@ CREATE TABLE photos (
   id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   userid MEDIUMINT NOT NULL,
   businessid MEDIUMINT NOT NULL,
-  caption VARCHAR(255), 
+  caption VARCHAR(255),
   FOREIGN KEY (businessid) REFERENCES business(id),
   INDEX idx_ownerid (userid)
 );
@@ -167,5 +169,3 @@ INSERT INTO reviews(id,userid,businessid,dollars,stars,review) VALUES (6,26,8,1,
 INSERT INTO reviews(id,userid,businessid,dollars,stars,review) VALUES (7,25,18,2,4.5,NULL);
 INSERT INTO reviews(id,userid,businessid,dollars,stars,review) VALUES (8,20,2,2,4,NULL);
 INSERT INTO reviews(id,userid,businessid,dollars,stars,review) VALUES (9,6,15,2,5,'Try the hazlenut torte.  It''s the best!');
-
-

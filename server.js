@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const api = require('./api');
 
 const { connectToDB } = require('./lib/mongo');
+const { connectToRabbitMQ, getChannel } = require('./lib/rabbitmq');
+
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -16,7 +18,6 @@ app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
-
 /*
  * All routes for the API are written in modules in the api/ directory.  The
  * top-level router lives in api/index.js.  That's what we include here, and
@@ -35,7 +36,7 @@ app.use('*', function (req, res, next) {
 // });
 
 connectToDB(async () => {
-  // await connectToRabbitMQ('images');
+  // await connectToRabbitMQ('csv');
   app.listen(port, () => {
     console.log("== Server is running on port", port);
   });

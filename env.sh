@@ -2,7 +2,7 @@
 echo "working"
 export MONGO_INITDB_DATABASE="tarpaulin"
 export MONGO_HOST="mongodb"
-export MONGO_DB_NAME="assignemnts"
+export MONGO_DB_NAME="assignments"
 export MONGO_DATABASE="tarpaulin"
 export MONGO_USER="nexus"
 export MONGO_PASSWORD="hunter2"

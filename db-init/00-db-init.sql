@@ -57,7 +57,6 @@ INSERT INTO `users` VALUES
   (14,"John Semadeni","john@corvalliscycleryinc.com","$2a$08$xIku71t6OFFN9Ztil1Kh2eQWk/0lC8C.UThx3PwAwYCSMxdzpPhTO","student"),
   (15,"Alex Spaeth","alex@spaethlumber.com","$2a$08$H9dDFONytVUgh2ZcCQlHL.8uP6RricbtoCk2vsr/roTBtGkYLUivS","student"),
   (16,"Tristan James","tristan@newmorningbakery.com","$2a$08$pJFEMJNiTa7azhokPUnXZusS6NMqT3eBJE45sX6Kli380PZoM2nje","student");
-  ;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,8 +69,8 @@ DROP TABLE IF EXISTS `courses`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `courses` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-  `description` varchar(500),
   `subject` varchar(255) NOT NULL,
+  `description` varchar(500) DEFAULT NULL,
   `number` mediumint(3) NOT NULL,
   `title` varchar(255) NOT NULL,
   `term` char(5) NOT NULL,
@@ -89,39 +88,58 @@ CREATE TABLE `courses` (
 LOCK TABLES `courses` WRITE;
 /*!40000 ALTER TABLE `courses` DISABLE KEYS */;
 INSERT INTO `courses` VALUES
-  (0,"CS",100,"Intro CS","Fall",1),
-  (1,"CS",101,"Intro CS","Fall",1),
-  (2,"CS",102,"Intro CS2","Fall",2),
-  (3,"CS",201,"Intro CS3","Winter",1),
-  (4,"CS",201,"Intro C++","Fall",3),
-  (5,"PAC",101,"BALLET","Fall",4),
-  (6,"PAC",102,"BALLET 2","Winter",4),
-  (7,"PAC",201,"Yoga","Spring",5),
-  (8,"BA",101,"Intro BA","Fall",6),
-  (9,"BA",102,"Intro BA 2","Winter",6),
-  (10,"SUS",101,"Intr SUS","Spring",7),
-  (11,"SUS",102,"Intro SUS 2","Summer",7),
-  (12,"GEOG",101,"Intro GEOG","Fall",8),
-  (13,"GEOG",102,"Intro GEOG 2","Spring",8),
-  (14,"MUS",101,"Intro MUS","Fall",9),
-  (15,"MUS",102,"Intro MUS 2","Winter",9);
+  (0,"CS","sample description",100,"Intro CS","Fall",1),
+  (1,"CS","sample description",101,"Intro CS","Fall",1),
+  (2,"CS","sample description",102,"Intro CS2","Fall",2),
+  (3,"CS","sample description",201,"Intro CS3","Winter",1),
+  (4,"CS","sample description",201,"Intro C++","Fall",3),
+  (5,"PAC","sample description",101,"BALLET","Fall",4),
+  (6,"PAC","sample description",102,"BALLET 2","Winter",4),
+  (7,"PAC","sample description",201,"Yoga","Spring",5),
+  (8,"BA","sample description",101,"Intro BA","Fall",6),
+  (9,"BA","sample description",102,"Intro BA 2","Winter",6),
+  (10,"SUS","sample description",101,"Intr SUS","Spring",7),
+  (11,"SUS","sample description",102,"Intro SUS 2","Summer",7),
+  (12,"GEOG","sample description",101,"Intro GEOG","Fall",8),
+  (13,"GEOG","sample description",102,"Intro GEOG 2","Spring",8),
+  (14,"MUS","sample description",101,"Intro MUS","Fall",9),
+  (15,"MUS","sample description",102,"Intro MUS 2","Winter",9);
 /*!40000 ALTER TABLE `courses` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
-DROP TABLE IF EXISTS `enroll`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `enroll` (
-  `course_id`  mediumint(9) NOT NULL,
-  `student_id` mediumint(9) NOT NULL,
-  PRIMARY KEY (`course_id`, `student_id`),
-  KEY `idx_student_id` (`student_id`),
-  KEY `idx_course_id` (`course_id`),
-  CONSTRAINT `enroll_ibfk_1` FOREIGN KEY (`student_is`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `enroll_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+-- DROP TABLE IF EXISTS `enroll`;
+-- /*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- /*!40101 SET character_set_client = utf8 */;
+-- CREATE TABLE `enroll` (
+--   `course_id`  mediumint(9) NOT NULL,
+--   `student_id` mediumint(9) NOT NULL,
+--   PRIMARY KEY (`course_id`, `student_id`),
+--   KEY `idx_student_id` (`student_id`),
+--   KEY `idx_course_id` (`course_id`),
+--   CONSTRAINT `enroll_ibfk_1` FOREIGN KEY (`student_is`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+--   CONSTRAINT `enroll_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+-- ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `enroll`;
+CREATE TABLE `enroll` (
+  `course` mediumint(9) NOT NULL,
+  `student` mediumint(9) NOT NULL,
+  PRIMARY KEY (course,student)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*!40000 ALTER TABLE `courses` DISABLE KEYS */;
+INSERT INTO `enroll` VALUES
+  (0,1),
+  (0,2),
+  (0,3),
+  (0,4),
+  (0,5),
+  (0,6),
+  (0,7),
+  (0,8),
+  (0,9);
+/*!40000 ALTER TABLE `courses` ENABLE KEYS */;
 
 
 --
