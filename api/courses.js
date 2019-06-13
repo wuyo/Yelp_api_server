@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
 });
 
 /*
- * Route to create a new business.
+ * Route to create a new course.
  */
 //router.post('/', requireAuthentication, async (req, res) => {
   //if (req.body.instructorId == req.user || req.admin) {
@@ -80,11 +80,11 @@ router.post('/', async (req, res) => {
 });
 
 /*
- * Route to fetch info about a specific business.
+ * Route to fetch info about a specific course.
  */
 router.get('/:id', async (req, res, next) => {
   try {
-    const business = await getCoursePageById(parseInt(req.params.id));
+    const course = await getCoursePageById(parseInt(req.params.id));
     if (course) {
       res.status(200).send(course);
     } else {
@@ -93,13 +93,13 @@ router.get('/:id', async (req, res, next) => {
   } catch (err) {
     console.error(err);
     res.status(500).send({
-      error: "Unable to fetch business.  Please try again later."
+      error: "Unable to fetch course.  Please try again later."
     });
   }
 });
 
 /*
- * Route to replace data for a business.
+ * Route to replace data for a course.
  */
 // router.put('/:id', requireAuthentication, async (req, res, next) => {
 //   if (req.body.userid == req.user || req.admin) {
@@ -137,7 +137,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 /*
- * Route to delete a business.
+ * Route to delete a course.
  */
 // router.delete('/:id', requireAuthentication, async (req, res, next) => {
 //   if (req.body.userid == req.user || req.admin) {
