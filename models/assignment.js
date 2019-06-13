@@ -6,6 +6,7 @@ const mysqlPool = require('../lib/mysqlPool');
 const { getDBReference } = require('../lib/mongo');
 const { ObjectId, GridFSBucket } = require('mongodb');
 const { extractValidFields } = require('../lib/validation');
+const fs = require('fs');
 
 /*
  * Schema describing required/optional fields of a assignment object.
@@ -29,6 +30,110 @@ const AssignmentPatchSchema = {
 };
 
 exports.AssignmentPatchSchema = AssignmentPatchSchema;
+
+
+async function getSubmissionById(id, page, studentid) {
+  const db = getDBReference();
+  const bucket = new GridFSBucket(db, { bucketName: 'submission'});
+  const collection = db.collection('submission.files');
+  const count = await collection.countDocuments();
+
+  const pageSize = 10;
+  const lastPage = Math.ceil(count / pageSize);
+  page = page < 1 ? 1 : page;
+  page = page > lastPage ? lastPage : page;
+  const offset = (page - 1) * pageSize;
+  const projection = { _id: 0, length: 0, chunkSize: 0,uploadDate: 0, md5: 0};
+
+  const results = await collection.find({"metadata.studentid": studentid, "metadata.assignmentid": new ObjectId(id)})
+    // .sort({ _id: 1 })
+    .project(projection)
+    .skip(offset)
+    .limit(pageSize)
+    .toArray();
+
+  return {
+    assignment: results,
+    page: page,
+    totalPages: lastPage,
+    pageSize: pageSize,
+    count: count
+  };
+ //  console.log("wnqefkjnqwkef");
+ //  const db = getDBReference();
+ //  const bucket = new GridFSBucket(db, { bucketName: 'submission'});
+ //  const collection = db.collection('submission.files');
+ //  // if (!ObjectId.isValid(id)) {
+ //  //   return null;
+ //  // } else {
+ //    // const results = await bucket.find({ _id: new ObjectId(id)})
+ //    //   .toArray();
+ //  const projection = { _id: 0, length: 0, chunkSize: 0,uploadDate: 0 };
+ // // }
+ //    const results = await collection.find({ studentid: ObjectId(studentid), "metadata.assignmentid": new ObjectId(id) })
+ //    .project(projection).toArray();
+ //    console.log(results);
+ //    return results;
+  // }
+}
+exports.getSubmissionById = getSubmissionById;
+
+
+async function insertNewSubmission(submit){
+  return new Promise((resolve, reject) => {
+    const db = getDBReference();
+    const bucket = new GridFSBucket(db, { bucketName: 'submission'});
+
+    const metadata = {
+      assignmentid: new ObjectId(submit.assignmentid),
+      studentid: submit.studentid,
+      timestamp: submit.timestamp
+    };
+
+    const uploadStream = bucket.openUploadStream(
+      submit.filename,
+      { metadata: metadata}
+    );
+
+    fs.createReadStream(submit.path)
+      .pipe(uploadStream)
+      .on('error', (err) => {
+        reject(err);
+      })
+      .on('finish', (result) => {
+        console.log("insert submission result: ", result);
+        resolve(result._id)
+      });
+  });
+
+}
+exports.insertNewSubmission = insertNewSubmission;
+
+exports.getAssignmentsPage = async function (page, studentid) {
+  const db = getDBReference();
+  const collection = db.collection('assignments');
+  const count = await collection.countDocuments();
+
+  const pageSize = 10;
+  const lastPage = Math.ceil(count / pageSize);
+  page = page < 1 ? 1 : page;
+  page = page > lastPage ? lastPage : page;
+  const offset = (page - 1) * pageSize;
+
+  const results = await collection.find({studentid: ObjectId(studentid)})
+    .sort({ _id: 1 })
+    .skip(offset)
+    .limit(pageSize)
+    .toArray();
+
+  return {
+    lodgings: results,
+    page: page,
+    totalPages: lastPage,
+    pageSize: pageSize,
+    count: count
+  };
+};
 
 /*
  * Executes a MySQL query to insert a new assignment into the database.  Returns
